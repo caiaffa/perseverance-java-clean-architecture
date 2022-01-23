@@ -5,5 +5,7 @@ services:
     image: perseverance
     build:
       context: .
+    env_file:
+      - env.dev
     ports:
       - "8080:8080"
