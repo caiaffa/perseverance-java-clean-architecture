@@ -1,0 +1,9 @@
+version: '3.3'
+services:
+  perseverance:
+    container_name: perseverance
+    image: perseverance
+    build:
+      context: .
+    ports:
+      - "8080:8080"
