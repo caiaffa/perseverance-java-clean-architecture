@@ -1,4 +1,4 @@
-package com.caiaffa.perseverance.web;
+package com.caiaffa.perseverance.web.exceptions;
 
 import com.caiaffa.perseverance.domain.PerseveranceException;
 import com.caiaffa.perseverance.web.models.response.ResponseError;
@@ -20,6 +20,7 @@ import org.springframework.web.multipart.support.MissingServletRequestPartExcept
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
@@ -70,6 +71,12 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         return new ResponseEntity<>(responseError, new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler( EntityNotFoundException.class )
+    public ResponseEntity<Object> handlePerseveranceNotFoundException(final EntityNotFoundException ex) {
+        final ResponseError responseError = new ResponseError("Not found", ex.getLocalizedMessage());
+        return new ResponseEntity<>(responseError, new HttpHeaders(), HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler({ ConstraintViolationException.class })
     public ResponseEntity<Object> handleConstraintViolation(final ConstraintViolationException ex, final WebRequest request) {
         final List<String> errors = new ArrayList<String>();
@@ -105,12 +112,6 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
         final ResponseError responseError = new ResponseError(ex.getLocalizedMessage(), builder.substring(0, builder.length() - 2));
         return new ResponseEntity<>(responseError, new HttpHeaders(), HttpStatus.UNSUPPORTED_MEDIA_TYPE);
-    }
-
-    @ExceptionHandler(Exception.class )
-    public ResponseEntity<Object> handleAllExceptions(final Exception ex) {
-        final ResponseError responseError = new ResponseError("server Error", ex.getLocalizedMessage());
-        return new ResponseEntity<>(responseError, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private List<String> getErrors(BindingResult bindingResult) {

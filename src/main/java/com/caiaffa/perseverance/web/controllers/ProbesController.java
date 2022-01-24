@@ -55,7 +55,8 @@ public class ProbesController {
 
     @PatchMapping("/move/{id}")
     public ResponseEntity<Probe> moveById(@PathVariable Long id, @Valid @RequestBody CommandRequest commandRequest){
-        Probe probe = moveProbe.move(id, commandRequest.getCommands());
+        Probe probe = findProbe.findById(id);
+        moveProbe.move(probe, commandRequest.getCommands());
         return new ResponseEntity<>(probe, HttpStatus.OK);
     }
 }

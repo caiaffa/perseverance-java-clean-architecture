@@ -44,7 +44,7 @@ public class MoveProbeTest {
         Mockito.when(probeRepository.existsByPosition(probe.getPosition().getX(), probe.getPosition().getY())).thenReturn(false);
         Mockito.when(probeRepository.findById(probe.getId())).thenReturn(probe);
         Mockito.when(probeRepository.update(probe)).thenReturn(new Probe(1L, "mark 3", new Position(0, 2), Direction.N));
-        Probe updatedProbe = moveProbe.move(probe.getId(), commands);
+        Probe updatedProbe = moveProbe.move(probe, commands);
         assertNotEquals(updatedProbe.getPosition().getX(), probe.getPosition().getY());
     }
 
@@ -54,7 +54,7 @@ public class MoveProbeTest {
         Mockito.when(probeRepository.update(probe)).thenReturn(updatedProbe);
         Mockito.when(probeRepository.findById(probe.getId())).thenReturn(probe);
         Mockito.when(probeRepository.existsByPosition(updatedProbe.getPosition().getX(), updatedProbe.getPosition().getY())).thenReturn(true);
-        moveProbe.move(probe.getId(), commands);
+        moveProbe.move(probe, commands);
         assertNotEquals(updatedProbe.getPosition().getX(), probe.getPosition().getY());
     }
 

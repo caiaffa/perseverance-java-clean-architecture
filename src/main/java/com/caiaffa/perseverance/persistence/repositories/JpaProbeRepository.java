@@ -9,6 +9,7 @@ import com.caiaffa.perseverance.persistence.entities.ProbeEntity;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.NoResultException;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -49,7 +50,7 @@ public class JpaProbeRepository implements ProbeRepository {
                 .createQuery("SELECT p FROM Probe p", ProbeEntity.class)
                 .getResultList()
                 .stream()
-                .map(entity -> converter.convertToProbe(entity))
+                .map(converter::convertToProbe)
                 .collect(Collectors.toList());
     }
 
@@ -81,13 +82,19 @@ public class JpaProbeRepository implements ProbeRepository {
     @Override
     public Probe findById(Long id) {
         ProbeEntity probeEntity = manager.find(ProbeEntity.class, id);
+        if (probeEntity == null) {
+            throw new EntityNotFoundException("Probe not found");
+        }
         return converter.convertToProbe(probeEntity);
     }
 
     @Transactional
     @Override
     public void removeById(Long id) {
-        ProbeEntity probeEntity = manager.getReference(ProbeEntity.class, id);
+        ProbeEntity probeEntity = manager.find(ProbeEntity.class, id);
+        if (probeEntity == null) {
+            throw new EntityNotFoundException("Probe not found");
+        }
         manager.remove(probeEntity);
     }
 

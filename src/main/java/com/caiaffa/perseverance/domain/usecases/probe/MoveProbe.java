@@ -18,9 +18,8 @@ public class MoveProbe {
         this.validations = validations;
     }
 
-    public Probe move(Long id, String commands) {
+    public Probe move(Probe probe, String commands) {
 
-        Probe probe = probeRepository.findById(id);
         Long positionId = probe.getPosition().getId();
 
         for (char command: commands.toCharArray()) {
